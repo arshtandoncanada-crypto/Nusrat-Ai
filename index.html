@@ -4,30 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nusrat Ai</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1;
-            border-radius: 20px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background-color: #94a3b8;
-        }
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
     </style>
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col">
 
-    <!-- Header -->
+    <div id="synonymPopover" class="hidden fixed z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-2 min-w-[140px]">
+        <div id="synonymLoading" class="hidden items-center justify-center p-4">
+            <i data-lucide="loader-2" class="w-5 h-5 animate-spin text-emerald-600"></i>
+        </div>
+        <ul id="synonymList" class="flex flex-col gap-1">
+            <li class="text-xs font-semibold text-slate-400 px-2 pb-1 uppercase tracking-wider">Synonyms</li>
+            </ul>
+    </div>
+
     <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -38,26 +34,20 @@
                     Nusrat Ai
                 </h1>
             </div>
-            <div class="text-sm font-medium text-slate-500 hidden sm:block">
-                Elevate your writing instantly
+            <div class="text-sm font-semibold text-emerald-600 hidden sm:block bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-100">
+                👋 <span id="greetingText"></span>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col gap-6">
         
-        <!-- Modes Toolbar -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-2 overflow-x-auto custom-scrollbar">
-            <div id="modesContainer" class="flex items-center gap-2 min-w-max">
-                <!-- Buttons injected via JS -->
-            </div>
+            <div id="modesContainer" class="flex items-center gap-2 min-w-max"></div>
         </div>
 
-        <!-- Editor Panes -->
         <div class="flex flex-col lg:flex-row gap-4 h-[calc(100vh-280px)] min-h-[500px]">
             
-            <!-- Input Panel -->
             <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 transition-all">
                 <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
                     <span class="text-sm font-semibold text-slate-700">Original Text</span>
@@ -79,7 +69,6 @@
                 </div>
             </div>
 
-            <!-- Output Panel -->
             <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
                 <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
                     <span class="text-sm font-semibold text-slate-700">Paraphrased Output</span>
@@ -87,8 +76,6 @@
                 </div>
                 
                 <div class="flex-1 relative bg-slate-50/30">
-                    
-                    <!-- Error State -->
                     <div id="errorState" class="hidden absolute inset-0 p-4 flex flex-col items-center justify-center text-center bg-white z-10">
                         <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-3">
                             <i data-lucide="alert-circle" class="w-6 h-6 text-red-500"></i>
@@ -96,29 +83,24 @@
                         <p id="errorText" class="text-sm font-medium text-red-600"></p>
                     </div>
 
-                    <!-- Loading Skeleton -->
                     <div id="loadingState" class="hidden absolute inset-0 p-4 z-10 bg-white">
                         <div class="animate-pulse flex flex-col gap-3">
                             <div class="h-4 bg-slate-200 rounded w-3/4"></div>
                             <div class="h-4 bg-slate-200 rounded w-full"></div>
                             <div class="h-4 bg-slate-200 rounded w-5/6"></div>
                             <div class="h-4 bg-slate-200 rounded w-full"></div>
-                            <div class="h-4 bg-slate-200 rounded w-2/3"></div>
                         </div>
                     </div>
 
-                    <!-- Empty State -->
                     <div id="emptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 z-0">
                         <i data-lucide="wand-2" class="w-12 h-12 mb-3 opacity-20"></i>
                         <p class="text-sm">Your rewritten text will appear here.</p>
                     </div>
 
-                    <!-- Output Textarea -->
-                    <textarea id="outputText" readonly class="hidden absolute inset-0 w-full h-full p-4 resize-none outline-none text-slate-700 text-base leading-relaxed bg-transparent z-0"></textarea>
+                    <div id="interactiveOutput" class="hidden absolute inset-0 w-full h-full p-4 overflow-y-auto outline-none text-slate-700 text-base leading-relaxed bg-transparent z-0 whitespace-pre-wrap"></div>
                 </div>
                 
-                <!-- Action Bar -->
-                <div class="p-4 border-t border-slate-100 bg-white flex justify-end">
+                <div class="p-4 border-t border-slate-100 bg-white flex justify-end z-10 relative">
                     <button id="copyBtn" disabled class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors text-slate-400 cursor-not-allowed">
                         <i data-lucide="copy" class="w-4 h-4" id="copyIcon"></i>
                         <i data-lucide="check" class="w-4 h-4 hidden" id="checkIcon"></i>
@@ -141,81 +123,75 @@
             { id: 'expand', label: 'Expand', icon: 'maximize-2', instruction: 'Expand upon the following text, adding relevant descriptive detail and depth to lengthen it.' },
         ];
 
+        const GREETINGS = [
+            "Hi Nusrat! Ready to write?",
+            "Hello Nusrat, let's paraphrase!",
+            "Welcome back, Nusrat!",
+            "Good to see you, Nusrat!",
+            "Hey Nusrat! What are we writing today?",
+            "Nusrat's Personal AI Assistant"
+        ];
+
         let selectedMode = 'standard';
         let isLoading = false;
+        let currentOutputText = "";
+        let activeWordData = null;
 
         // Elements
         const modesContainer = document.getElementById('modesContainer');
         const inputText = document.getElementById('inputText');
-        const outputText = document.getElementById('outputText');
+        const interactiveOutput = document.getElementById('interactiveOutput');
         const paraphraseBtn = document.getElementById('paraphraseBtn');
         const clearBtn = document.getElementById('clearBtn');
         const copyBtn = document.getElementById('copyBtn');
         const inputWordCount = document.getElementById('inputWordCount');
         const outputWordCount = document.getElementById('outputWordCount');
         
-        // States
+        // States & Modals
         const emptyState = document.getElementById('emptyState');
         const loadingState = document.getElementById('loadingState');
         const errorState = document.getElementById('errorState');
         const errorText = document.getElementById('errorText');
-        const btnText = document.getElementById('btnText');
-        const btnLoading = document.getElementById('btnLoading');
+        const synonymPopover = document.getElementById('synonymPopover');
+        const synonymList = document.getElementById('synonymList');
+        const synonymLoading = document.getElementById('synonymLoading');
 
-        // Helpers
+        // Initial Setup
+        document.getElementById('greetingText').textContent = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+        
         const getWordCount = (text) => text.trim().split(/\s+/).filter(w => w.length > 0).length;
 
-        // Render Modes
         function renderModes() {
             modesContainer.innerHTML = MODES.map(mode => {
                 const isSelected = selectedMode === mode.id;
                 const activeClasses = 'bg-emerald-50 text-emerald-700 shadow-sm border-emerald-100';
                 const inactiveClasses = 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 border-transparent';
-                const iconColor = isSelected ? 'text-emerald-600' : 'text-slate-400';
-                
-                return `
-                    <button onclick="selectMode('${mode.id}')" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${isSelected ? activeClasses : inactiveClasses}">
-                        <i data-lucide="${mode.icon}" class="w-4 h-4 ${iconColor}"></i>
-                        ${mode.label}
-                    </button>
-                `;
+                return `<button onclick="selectMode('${mode.id}')" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${isSelected ? activeClasses : inactiveClasses}">
+                        <i data-lucide="${mode.icon}" class="w-4 h-4 ${isSelected ? 'text-emerald-600' : 'text-slate-400'}"></i>${mode.label}</button>`;
             }).join('');
             lucide.createIcons();
         }
 
-        // Handle Mode Selection
-        window.selectMode = (id) => {
-            selectedMode = id;
-            renderModes();
-        };
+        window.selectMode = (id) => { selectedMode = id; renderModes(); };
 
-        // Handle Input Typing
         inputText.addEventListener('input', (e) => {
-            const text = e.target.value;
-            const count = getWordCount(text);
+            const count = getWordCount(e.target.value);
             inputWordCount.textContent = `${count} words`;
-            
-            if (text.trim().length > 0 && !isLoading) {
-                clearBtn.classList.remove('hidden');
-                clearBtn.classList.add('flex');
+            if (e.target.value.trim().length > 0 && !isLoading) {
+                clearBtn.classList.replace('hidden', 'flex');
                 paraphraseBtn.disabled = false;
                 paraphraseBtn.className = "w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-lg";
             } else {
-                clearBtn.classList.add('hidden');
-                clearBtn.classList.remove('flex');
+                clearBtn.classList.replace('flex', 'hidden');
                 paraphraseBtn.disabled = true;
                 paraphraseBtn.className = "w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 bg-slate-100 text-slate-400 cursor-not-allowed";
             }
         });
 
-        // Handle Clear
         clearBtn.addEventListener('click', () => {
-            inputText.value = '';
-            outputText.value = '';
-            inputText.dispatchEvent(new Event('input')); // Trigger input event to reset counts
-            
-            // Reset output view
-            outputText.classList.add('hidden');
+            inputText.value = ''; currentOutputText = '';
+            inputText.dispatchEvent(new Event('input'));
+            interactiveOutput.classList.add('hidden');
             emptyState.classList.remove('hidden');
             errorState.classList.add('hidden');
             outputWordCount.classList.add('hidden');
@@ -223,47 +199,128 @@
             copyBtn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors text-slate-400 cursor-not-allowed";
         });
 
-        // Handle Copy
         copyBtn.addEventListener('click', async () => {
-            if (!outputText.value) return;
+            if (!currentOutputText) return;
             try {
-                await navigator.clipboard.writeText(outputText.value);
-                const copyIcon = document.getElementById('copyIcon');
-                const checkIcon = document.getElementById('checkIcon');
-                const copyTextLabel = document.getElementById('copyText');
-                
-                copyIcon.classList.add('hidden');
-                checkIcon.classList.remove('hidden');
-                copyTextLabel.textContent = "Copied!";
-                copyBtn.classList.replace('text-slate-600', 'text-emerald-600');
-                copyBtn.classList.add('bg-emerald-50');
-
+                await navigator.clipboard.writeText(currentOutputText);
+                document.getElementById('copyIcon').classList.add('hidden');
+                document.getElementById('checkIcon').classList.remove('hidden');
+                document.getElementById('copyText').textContent = "Copied!";
+                copyBtn.classList.add('text-emerald-600', 'bg-emerald-50');
                 setTimeout(() => {
-                    copyIcon.classList.remove('hidden');
-                    checkIcon.classList.add('hidden');
-                    copyTextLabel.textContent = "Copy Text";
-                    copyBtn.classList.replace('text-emerald-600', 'text-slate-600');
-                    copyBtn.classList.remove('bg-emerald-50');
+                    document.getElementById('copyIcon').classList.remove('hidden');
+                    document.getElementById('checkIcon').classList.add('hidden');
+                    document.getElementById('copyText').textContent = "Copy Text";
+                    copyBtn.classList.remove('text-emerald-600', 'bg-emerald-50');
                 }, 2000);
-            } catch (err) {
-                console.error('Failed to copy', err);
+            } catch (err) { console.error(err); }
+        });
+
+        // Interactive Text Rendering
+        function renderInteractiveText(text) {
+            currentOutputText = text;
+            interactiveOutput.innerHTML = '';
+            const tokens = text.split(/([a-zA-Z]+(?:'[a-zA-Z]+)?)/);
+            
+            tokens.forEach((token, index) => {
+                const isWord = index % 2 !== 0;
+                const span = document.createElement('span');
+                if (isWord) {
+                    span.textContent = token;
+                    span.className = 'cursor-pointer transition-colors rounded px-[1px] -mx-[1px] hover:bg-emerald-100 hover:text-emerald-700';
+                    span.addEventListener('click', (e) => handleWordClick(token, index, e, span));
+                } else {
+                    span.textContent = token;
+                }
+                interactiveOutput.appendChild(span);
+            });
+            outputWordCount.textContent = `${getWordCount(text)} words`;
+        }
+
+        // Synonym Logic
+        async function handleWordClick(word, index, e, spanElement) {
+            e.stopPropagation();
+            document.querySelectorAll('#interactiveOutput span').forEach(el => {
+                if(el.classList.contains('cursor-pointer')) {
+                    el.classList.remove('bg-emerald-200', 'text-emerald-900');
+                    el.classList.add('hover:bg-emerald-100', 'hover:text-emerald-700');
+                }
+            });
+            spanElement.classList.add('bg-emerald-200', 'text-emerald-900');
+            spanElement.classList.remove('hover:bg-emerald-100', 'hover:text-emerald-700');
+            
+            activeWordData = { index, word };
+            const rect = spanElement.getBoundingClientRect();
+            synonymPopover.style.top = `${rect.bottom + window.scrollY + 8}px`;
+            synonymPopover.style.left = `${rect.left + window.scrollX - 20}px`;
+            synonymPopover.classList.remove('hidden');
+            synonymLoading.classList.replace('hidden', 'flex');
+            
+            document.querySelectorAll('.syn-item').forEach(el => el.remove());
+            
+            try {
+                const prompt = `Provide 3 contextually appropriate synonyms for the word "${word}" based on this exact sentence context:\n"${currentOutputText}"\n\nReturn ONLY a comma-separated list of the 3 words. No intro, no quotes.`;
+                const response = await fetch('/api/rewrite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                let parsed = text.split(',').map(s => s.trim().replace(/[^a-zA-Z-]/g, '')).filter(s => s.length > 0 && s.toLowerCase() !== word.toLowerCase()).slice(0, 3);
+                if (parsed.length === 0) parsed = ["No synonyms found"];
+                
+                synonymLoading.classList.replace('flex', 'hidden');
+                parsed.forEach(syn => {
+                    const li = document.createElement('li');
+                    li.className = 'syn-item px-3 py-1.5 hover:bg-emerald-50 hover:text-emerald-700 rounded-lg cursor-pointer text-sm font-medium text-slate-700 transition-colors';
+                    li.textContent = syn;
+                    li.addEventListener('click', (ev) => { ev.stopPropagation(); handleSynonymSelect(syn); });
+                    synonymList.appendChild(li);
+                });
+            } catch(err) {
+                synonymLoading.classList.replace('flex', 'hidden');
+                const li = document.createElement('li');
+                li.className = 'syn-item px-3 py-1.5 text-sm font-medium text-red-500';
+                li.textContent = "Error loading";
+                synonymList.appendChild(li);
+            }
+        }
+
+        function handleSynonymSelect(synonym) {
+            if (synonym === "Error loading" || synonym === "No synonyms found") return;
+            const tokens = currentOutputText.split(/([a-zA-Z]+(?:'[a-zA-Z]+)?)/);
+            let finalSynonym = synonym.toLowerCase();
+            if (/^[A-Z]/.test(activeWordData.word)) finalSynonym = finalSynonym.charAt(0).toUpperCase() + finalSynonym.slice(1);
+            tokens[activeWordData.index] = finalSynonym;
+            synonymPopover.classList.add('hidden');
+            renderInteractiveText(tokens.join(''));
+        }
+
+        // Close popover when clicking outside
+        document.addEventListener('click', (e) => {
+            if(!synonymPopover.contains(e.target) && !e.target.closest('#interactiveOutput span')) {
+                synonymPopover.classList.add('hidden');
+                document.querySelectorAll('#interactiveOutput span').forEach(el => {
+                    if(el.classList.contains('cursor-pointer')) {
+                        el.classList.remove('bg-emerald-200', 'text-emerald-900');
+                        el.classList.add('hover:bg-emerald-100', 'hover:text-emerald-700');
+                    }
+                });
             }
         });
 
-        // Handle API Request
+        // Paraphrase Logic
         paraphraseBtn.addEventListener('click', async () => {
             const text = inputText.value.trim();
             if (!text) return;
 
-            // Set Loading UI
-            isLoading = true;
-            paraphraseBtn.disabled = true;
-            btnText.classList.add('hidden');
-            btnLoading.classList.remove('hidden');
-            btnLoading.classList.add('flex');
+            isLoading = true; paraphraseBtn.disabled = true;
+            document.getElementById('btnText').classList.add('hidden');
+            document.getElementById('btnLoading').classList.replace('hidden', 'flex');
             
             emptyState.classList.add('hidden');
-            outputText.classList.add('hidden');
+            interactiveOutput.classList.add('hidden');
             errorState.classList.add('hidden');
             loadingState.classList.remove('hidden');
             outputWordCount.classList.add('hidden');
@@ -281,40 +338,26 @@
 
                 const result = await response.json();
 
-                if (response.ok && result.candidates && result.candidates.length > 0) {
-                    const rewritten = result.candidates[0].content.parts[0].text;
-                    outputText.value = rewritten;
-                    
-                    // Show Output
+                if (response.ok && result.candidates?.length > 0) {
+                    renderInteractiveText(result.candidates[0].content.parts[0].text);
                     loadingState.classList.add('hidden');
-                    outputText.classList.remove('hidden');
-                    
-                    // Update Output Word Count
-                    outputWordCount.textContent = `${getWordCount(rewritten)} words`;
+                    interactiveOutput.classList.remove('hidden');
                     outputWordCount.classList.remove('hidden');
-                    
-                    // Enable Copy Button
                     copyBtn.disabled = false;
                     copyBtn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors text-slate-600 hover:bg-slate-100 cursor-pointer";
-                } else {
-                    throw new Error(result.error || "Google AI rejected the request.");
-                }
+                } else throw new Error(result.error || "Google AI rejected the request.");
             } catch (error) {
                 loadingState.classList.add('hidden');
                 errorState.classList.remove('hidden');
                 errorText.textContent = error.message || "Failed to paraphrase the text. Please try again.";
             } finally {
-                isLoading = false;
-                paraphraseBtn.disabled = false;
-                btnText.classList.remove('hidden');
-                btnLoading.classList.add('hidden');
-                btnLoading.classList.remove('flex');
+                isLoading = false; paraphraseBtn.disabled = false;
+                document.getElementById('btnText').classList.remove('hidden');
+                document.getElementById('btnLoading').classList.replace('flex', 'hidden');
             }
         });
 
-        // Initial setup
-        renderModes();
-        lucide.createIcons();
+        renderModes(); lucide.createIcons();
     </script>
 </body>
 </html>
