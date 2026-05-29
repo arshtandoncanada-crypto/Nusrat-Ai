@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nusrat Ai - Modern Paraphrasing</title>
+    <style>
+        /* Modern, sleek dark mode design */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+        p {
+            color: #a0a0a0;
+            margin-bottom: 30px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        textarea:focus {
+            border-color: #ffffff;
+        }
+        button {
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            align-self: center;
+        }
+        button:hover {
+            background-color: #e0e0e0;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        button:disabled {
+            background-color: #555;
+            color: #888;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Nusrat Ai</h1>
+    <p>Paste your text below to rewrite it instantly.</p>
+
+    <div class="container">
+        <textarea id="inputText" placeholder="Enter the text you want to paraphrase here..."></textarea>
+        
+        <button id="paraphraseBtn">Paraphrase</button>
+        
+        <textarea id="outputText" placeholder="Your polished text will appear here..." readonly></textarea>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
