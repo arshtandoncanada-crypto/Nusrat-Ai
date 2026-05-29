@@ -3,126 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nusrat Ai - Paraphraser</title>
+    <title>Nusrat Ai</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
     <style>
-        /* Modern QuillBot-Style CSS */
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
         }
-        h1 {
-            color: #10b981; /* Fresh Emerald Green */
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            letter-spacing: -0.5px;
-        }
-        .editor-wrapper {
-            display: flex;
-            background: #ffffff;
-            width: 100%;
-            max-width: 1100px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
-            overflow: hidden;
-            position: relative;
-        }
-        .pane {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .pane:first-child {
-            border-right: 1px solid #e5e7eb;
-        }
-        textarea {
-            width: 100%;
-            height: 350px;
-            padding: 24px;
-            border: none;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            resize: none;
-            outline: none;
-            box-sizing: border-box;
+        .custom-scrollbar::-webkit-scrollbar-track {
             background: transparent;
-            color: #374151;
         }
-        textarea::placeholder {
-            color: #9ca3af;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
         }
-        .button-container {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-        }
-        button {
-            background-color: #10b981;
-            color: white;
-            border: none;
-            padding: 12px 32px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-            transition: all 0.2s ease;
-        }
-        button:hover {
-            background-color: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-        }
-        button:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        /* Mobile friendly: stack them on small screens */
-        @media (max-width: 768px) {
-            .editor-wrapper {
-                flex-direction: column;
-            }
-            .pane:first-child {
-                border-right: none;
-                border-bottom: 1px solid #e5e7eb;
-            }
-            .button-container {
-                bottom: auto;
-                top: 50%;
-                transform: translate(-50%, -50%);
-            }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #94a3b8;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col">
 
-    <h1>Nusrat Ai</h1>
-
-    <div class="editor-wrapper">
-        <div class="pane">
-            <textarea id="inputText" placeholder="Paste your text here to paraphrase..."></textarea>
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="bg-emerald-600 p-2 rounded-lg">
+                    <i data-lucide="wand-2" class="w-6 h-6 text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-600">
+                    Nusrat Ai
+                </h1>
+            </div>
+            <div class="text-sm font-medium text-slate-500 hidden sm:block">
+                Elevate your writing instantly
+            </div>
         </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col gap-6">
         
-        <div class="button-container">
-            <button id="paraphraseBtn">Paraphrase</button>
+        <!-- Modes Toolbar -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-2 overflow-x-auto custom-scrollbar">
+            <div id="modesContainer" class="flex items-center gap-2 min-w-max">
+                <!-- Buttons injected via JS -->
+            </div>
         </div>
 
-        <div class="pane">
-            <textarea id="outputText" placeholder="Your modern, polished text will appear here..." readonly></textarea>
-        </div>
-    </div>
+        <!-- Editor Panes -->
+        <div class="flex flex-col lg:flex-row gap-4 h-[calc(100vh-280px)] min-h-[500px]">
+            
+            <!-- Input Panel -->
+            <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 transition-all">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+                    <span class="text-sm font-semibold text-slate-700">Original Text</span>
+                    <div class="flex items-center gap-3 text-xs font-medium text-slate-400">
+                        <span id="inputWordCount">0 words</span>
+                        <button id="clearBtn" class="hidden items-center gap-1 text-slate-500 hover:text-red-500 transition-colors">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <textarea id="inputText" placeholder="Paste or type your text here to rewrite it..." class="flex-1 w-full p-4 resize-none outline-none text-slate-700 text-base leading-relaxed"></textarea>
+                
+                <div class="p-4 border-t border-slate-100 bg-white">
+                    <button id="paraphraseBtn" disabled class="w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 bg-slate-100 text-slate-400 cursor-not-allowed">
+                        <span id="btnText" class="flex items-center gap-2">Paraphrase <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        <span id="btnLoading" class="hidden items-center gap-2"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Rewriting...</span>
+                    </button>
+                </div>
+            </div>
 
-    <script src="script.js"></script>
+            <!-- Output Panel -->
+            <div class="flex-1 flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+                    <span class="text-sm font-semibold text-slate-700">Paraphrased Output</span>
+                    <span id="outputWordCount" class="text-xs font-medium text-slate-400 hidden">0 words</span>
+                </div>
+                
+                <div class="flex-1 relative bg-slate-50/30">
+                    
+                    <!-- Error State -->
+                    <div id="errorState" class="hidden absolute inset-0 p-4 flex flex-col items-center justify-center text-center bg-white z-10">
+                        <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-3">
+                            <i data-lucide="alert-circle" class="w-6 h-6 text-red-500"></i>
+                        </div>
+                        <p id="errorText" class="text-sm font-medium text-red-600"></p>
+                    </div>
+
+                    <!-- Loading Skeleton -->
+                    <div id="loadingState" class="hidden absolute inset-0 p-4 z-10 bg-white">
+                        <div class="animate-pulse flex flex-col gap-3">
+                            <div class="h-4 bg-slate-200 rounded w-3/4"></div>
+                            <div class="h-4 bg-slate-200 rounded w-full"></div>
+                            <div class="h-4 bg-slate-200 rounded w-5/6"></div>
+                            <div class="h-4 bg-slate-200 rounded w-full"></div>
+                            <div class="h-4 bg-slate-200 rounded w-2/3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="emptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 z-0">
+                        <i data-lucide="wand-2" class="w-12 h-12 mb-3 opacity-20"></i>
+                        <p class="text-sm">Your rewritten text will appear here.</p>
+                    </div>
+
+                    <!-- Output Textarea -->
+                    <textarea id="outputText" readonly class="hidden absolute inset-0 w-full h-full p-4 resize-none outline-none text-slate-700 text-base leading-relaxed bg-transparent z-0"></textarea>
+                </div>
+                
+                <!-- Action Bar -->
+                <div class="p-4 border-t border-slate-100 bg-white flex justify-end">
+                    <button id="copyBtn" disabled class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors text-slate-400 cursor-not-allowed">
+                        <i data-lucide="copy" class="w-4 h-4" id="copyIcon"></i>
+                        <i data-lucide="check" class="w-4 h-4 hidden" id="checkIcon"></i>
+                        <span id="copyText">Copy Text</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const MODES = [
+            { id: 'standard', label: 'Standard', icon: 'align-left', instruction: 'Rewrite the following text clearly and naturally, keeping the original meaning intact.' },
+            { id: 'fluency', label: 'Fluency', icon: 'type', instruction: 'Improve the flow and grammar of the following text, making it sound more fluent and native.' },
+            { id: 'formal', label: 'Formal', icon: 'briefcase', instruction: 'Rewrite the following text in a highly formal, professional, and sophisticated tone.' },
+            { id: 'academic', label: 'Academic', icon: 'graduation-cap', instruction: 'Rewrite the following text in an academic, scholarly, and objective tone suitable for research papers.' },
+            { id: 'creative', label: 'Creative', icon: 'sparkles', instruction: 'Rewrite the following text creatively, using engaging vocabulary and varying sentence structures.' },
+            { id: 'shorten', label: 'Shorten', icon: 'minimize-2', instruction: 'Summarize and shorten the following text, making it highly concise without losing key information.' },
+            { id: 'expand', label: 'Expand', icon: 'maximize-2', instruction: 'Expand upon the following text, adding relevant descriptive detail and depth to lengthen it.' },
+        ];
+
+        let selectedMode = 'standard';
+        let isLoading = false;
+
+        // Elements
+        const modesContainer = document.getElementById('modesContainer');
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const paraphraseBtn = document.getElementById('paraphraseBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const inputWordCount = document.getElementById('inputWordCount');
+        const outputWordCount = document.getElementById('outputWordCount');
+        
+        // States
+        const emptyState = document.getElementById('emptyState');
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const errorText = document.getElementById('errorText');
+        const btnText = document.getElementById('btnText');
+        const btnLoading = document.getElementById('btnLoading');
+
+        // Helpers
+        const getWordCount = (text) => text.trim().split(/\s+/).filter(w => w.length > 0).length;
+
+        // Render Modes
+        function renderModes() {
+            modesContainer.innerHTML = MODES.map(mode => {
+                const isSelected = selectedMode === mode.id;
+                const activeClasses = 'bg-emerald-50 text-emerald-700 shadow-sm border-emerald-100';
+                const inactiveClasses = 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 border-transparent';
+                const iconColor = isSelected ? 'text-emerald-600' : 'text-slate-400';
+                
+                return `
+                    <button onclick="selectMode('${mode.id}')" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${isSelected ? activeClasses : inactiveClasses}">
+                        <i data-lucide="${mode.icon}" class="w-4 h-4 ${iconColor}"></i>
+                        ${mode.label}
+                    </button>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // Handle Mode Selection
+        window.selectMode = (id) => {
+            selectedMode = id;
+            renderModes();
+        };
+
+        // Handle Input Typing
+        inputText.addEventListener('input', (e) => {
+            const text = e.target.value;
+            const count = getWordCount(text);
+            inputWordCount.textContent = `${count} words`;
+            
+            if (text.trim().length > 0 && !isLoading) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+                paraphraseBtn.disabled = false;
+                paraphraseBtn.className = "w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-lg";
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+                paraphraseBtn.disabled = true;
+                paraphraseBtn.className = "w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-200 bg-slate-100 text-slate-400 cursor-not-allowed";
+            }
+        });
+
+        // Handle Clear
+        clearBtn.addEventListener('click', () => {
+            inputText.value = '';
+            outputText.value = '';
+            inputText.dispatchEvent(new Event('input')); // Trigger input event to reset counts
+            
+            // Reset output view
+            outputText.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            outputWordCount.classList.add('hidden');
+            copyBtn.disabled = true;
+            copyBtn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors text-slate-400 cursor-not-allowed";
+        });
+
+        // Handle Copy
+        copyBtn.addEventListener('click', async () => {
+            if (!outputText.value) return;
+            try {
+                await navigator.clipboard.writeText(outputText.value);
+                const copyIcon = document.getElementById('copyIcon');
+                const checkIcon = document.getElementById('checkIcon');
+                const copyTextLabel = document.getElementById('copyText');
+                
+                copyIcon.classList.add('hidden');
+                checkIcon.classList.remove('hidden');
+                copyTextLabel.textContent = "Copied!";
+                copyBtn.classList.replace('text-slate-600', 'text-emerald-600');
+                copyBtn.classList.add('bg-emerald-50');
+
+                setTimeout(() => {
+                    copyIcon.classList.remove('hidden');
+                    checkIcon.classList.add('hidden');
+                    copyTextLabel.textContent = "Copy Text";
+                    copyBtn.classList.replace('text-emerald-600', 'text-slate-600');
+                    copyBtn.classList.remove('bg-emerald-50');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+        });
+
+        // Handle API Request
+        paraphraseBtn.addEventListener('click', async () => {
+            const text = inputText.value.trim();
+            if (!text) return;
+
+            // Set Loading UI
+            isLoading = true;
+            paraphraseBtn.disabled = true;
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            btnLoading.classList.add('flex');
+            
+            emptyState.classList.add('hidden');
+            outputText.classList.add('hidden');
+            errorState.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            outputWordCount.classList.add('hidden');
+            copyBtn.disabled = true;
+
+            const modeConfig = MODES.find(m => m.id === selectedMode);
+            const userQuery = `${modeConfig.instruction}\n\nText to paraphrase:\n${text}`;
+
+            try {
+                const response = await fetch('/api/rewrite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: userQuery })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.candidates && result.candidates.length > 0) {
+                    const rewritten = result.candidates[0].content.parts[0].text;
+                    outputText.value = rewritten;
+                    
+                    // Show Output
+                    loadingState.classList.add('hidden');
+                    outputText.classList.remove('hidden');
+                    
+                    // Update Output Word Count
+                    outputWordCount.textContent = `${getWordCount(rewritten)} words`;
+                    outputWordCount.classList.remove('hidden');
+                    
+                    // Enable Copy Button
+                    copyBtn.disabled = false;
+                    copyBtn.className = "px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-colors text-slate-600 hover:bg-slate-100 cursor-pointer";
+                } else {
+                    throw new Error(result.error || "Google AI rejected the request.");
+                }
+            } catch (error) {
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                errorText.textContent = error.message || "Failed to paraphrase the text. Please try again.";
+            } finally {
+                isLoading = false;
+                paraphraseBtn.disabled = false;
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+                btnLoading.classList.remove('flex');
+            }
+        });
+
+        // Initial setup
+        renderModes();
+        lucide.createIcons();
+    </script>
 </body>
 </html>
